@@ -5,6 +5,8 @@ import re
 
 # re for regular expression
 
+# here each question beacomes an element of the document list
+
 def IDF(document):
     IDF_score = {}
     inverse_map = {}
@@ -86,6 +88,7 @@ def main():
         except:
             pass
     
+    
     output = IDF(document)
     idf, inverse_map = output[0], output[1]
     tf = TF(document, idf, inverse_map)
@@ -107,7 +110,6 @@ def main():
         try:
             with open(path_name + 'LC_link' + str(file) + '.txt', 'r') as f:
                 data = f.read()
-                data = cleanedData(data)
                 doc_links.append(data)
                 f.close()
         except:
