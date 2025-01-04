@@ -22,20 +22,20 @@ def process_query(tf_idf_data, doc_links, doc_titles, docs):
 
           for index, _ in sorted_docs:
                doc_index = int(index)
-               result = f"{doc_links[doc_index]}*{doc_titles[doc_index]}"
+               result = f"{doc_links[doc_index]}*{docs[doc_index]}"
                search_results.append(result)
 
      except Exception as e:
           print(f"Err in processing query : {e}")
+   
+    
+     # Remove duplicates while preserving order
+     search_results = list(dict.fromkeys(search_results))
 
 
-     output = {
-          'results' : search_results
-     }     
+     print(json.dumps(search_results))
 
-     print(json.dumps(output))
-
-     return output
+     return search_results
 
 
 if __name__ == '__main__':

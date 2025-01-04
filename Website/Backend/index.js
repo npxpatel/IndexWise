@@ -6,7 +6,7 @@ app.use(cors())
 app.use(express.json())
 
 
-const path = "DummyPath"
+const path = "../../TF_IDF_implementation/search.py"
 
 app.get('/', (req, res) => {
     res.send('Alright!')
