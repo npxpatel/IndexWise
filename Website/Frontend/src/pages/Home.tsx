@@ -1,11 +1,9 @@
 import { useState } from "react";
-import { Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { SearchResults } from "../components/SearchResults";
-import { DifficultyLegend } from "../components/DifficultyLegend";
-import { Card } from "@/components/ui/card";
 import axios from "axios";
+import { SearchResults } from "@/components/SearchResults";
+import { SearchBar } from "@/components//SearchBar";
+import { Header } from "@/components/Header";
+import { EmptyState } from "@/components/EmptyState";
 
 export default function Home() {
   const [query, setQuery] = useState("");
@@ -18,61 +16,50 @@ export default function Home() {
       const response = await axios.post("http://localhost:8000/api/v1/search", {
         search: query,
       });
-
-      // console.log(response.data)
       setResult(response.data);
       setShowResults(true);
-
-      console.log("Searching for:", query);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
 
+  const handleQueryChange = (value: string) => {
+    setQuery(value);
+    setShowResults(false);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto">
-        <h1 className="text-4xl font-extrabold text-center mb-8 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
-          Index - Wise
-        </h1>
+    <main className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900">
+      <div className="relative">
+        {/* Background decoration */}
+        <div className="absolute inset-0 bg-grid-white/[0.02] -z-10" />
+        <div className="absolute inset-0 flex items-center justify-center -z-10">
+          <div className="w-[40rem] h-[40rem] bg-blue-500/10 rounded-full blur-3xl" />
+          <div className="w-[30rem] h-[30rem] bg-purple-500/10 rounded-full blur-3xl -translate-x-1/2" />
+        </div>
 
-        <form onSubmit={handleSubmit} className="mb-8">
-          <div className="flex">
-            <Input
-              type="text"
-              placeholder="Search for coding questions..."
-              value={query}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                setShowResults(false);
-              }}
-              className="flex-grow bg-gray-800 text-gray-100 border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-            <Button
-              type="submit"
-              className="ml-2 bg-blue-500 hover:bg-blue-600"
-            >
-              <Search className="h-4 w-4 mr-2" />
-              Search
-            </Button>
+        {/* Content */}
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <Header 
+            title="Index - Wise"
+            subtitle="Find the perfect coding questions to level up your skills"
+          />
+
+          <SearchBar 
+            query={query}
+            onQueryChange={handleQueryChange}
+            onSubmit={handleSubmit}
+          />
+
+          <div className="mt-12">
+            {showResults ? (
+              <SearchResults results={result} />
+            ) : (
+              <EmptyState />
+            )}
           </div>
-        </form>
-
-        <DifficultyLegend />
-
-        {showResults ? (
-          <SearchResults results={result} />
-        ) : (
-          <Card className="bg-gray-800 border-gray-700">
-            <div className="p-6">
-              <h2 className="text-2xl font-bold mb-4 text-gray-100">
-                Search Results
-              </h2>
-              <p className="text-gray-300">No results to display.</p>
-            </div>
-          </Card>
-        )}
+        </div>
       </div>
-    </div>
+    </main>
   );
 }
