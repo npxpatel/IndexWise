@@ -5,16 +5,16 @@ import re
 
 # re for regular expression
 
-# here each question beacomes an element of the document list
+# here each question is a doc and all doc makes it a corpus.
 
-def IDF(document):
+def IDF(corpus):
     IDF_score = {}
     inverse_map = {}
     idx = 0
 
-    for sentence in document:
-        sentence = set(sentence.split())
-        for word in sentence:
+    for doc in corpus:
+        doc = set(doc.split())
+        for word in doc:
             if word not in IDF_score:
                 IDF_score[word] = 1
             else:
@@ -27,12 +27,12 @@ def IDF(document):
         idx += 1   
 
     for word in IDF_score:
-        IDF_score[word] = 1 + math.log(len(document) / IDF_score[word])      
+        IDF_score[word] = 1 + math.log(len(corpus) / IDF_score[word])      
 
     return IDF_score, inverse_map
 
 
-def TF(document, IDF, inverse_map):
+def TF(corpus, IDF, inverse_map):
     TF_score = {}
 
     for word in IDF:
@@ -40,10 +40,10 @@ def TF(document, IDF, inverse_map):
         list = inverse_map[word]
 
         for idx in list:
-            sentence = document[idx]
-            sentence = sentence.split()
-            if word in sentence:
-               TF_score[word][idx] =  sentence.count(word) / len(sentence) 
+            doc = corpus[idx]
+            doc = doc.split()
+            if word in doc:
+               TF_score[word][idx] =  doc.count(word) / len(doc) 
             else:
                 TF_score[word][idx] = 0
 
@@ -74,7 +74,7 @@ def cleanedData(data):
     return data
 
 def main():
-    document = []
+    corpus = []
     lc_taskSize = 180
 
     path_name = f'Code_Scraper/leetcode/taskContent/'
@@ -84,14 +84,14 @@ def main():
             with open(path_name + 'LC_task' + str(file) + '.txt', 'r') as f:
                 data = f.read()
                 data = cleanedData(data)
-                document.append(data)
+                corpus.append(data)
         except:
             pass
     
     
-    output = IDF(document)
+    output = IDF(corpus)
     idf, inverse_map = output[0], output[1]
-    tf = TF(document, idf, inverse_map)
+    tf = TF(corpus, idf, inverse_map)
 
     tf_idf_scores = TF_IDF(tf, idf)
 
@@ -99,7 +99,7 @@ def main():
         json.dump(tf_idf_scores, f)
 
     with open('TF_IDF_implementation/doc.json', 'w') as f:
-        json.dump(document, f)    
+        json.dump(corpus, f)    
 
     doc_links = []
     doc_names = []
